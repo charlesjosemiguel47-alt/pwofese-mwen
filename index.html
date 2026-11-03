@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="ht">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173b68">
+<title>PWOFESÈ MWEN</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--navy:#173b68;--blue:#2463a6;--bg:#f3f6fa;--ink:#172435;--muted:#65758a;--line:#dce4ee;--green:#16794b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:var(--navy);color:white;padding:20px 18px 24px;border-radius:0 0 22px 22px}
+header .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font-size:23px;margin:0}header p{margin:7px 0 0;color:#dce9f8;font-size:14px}
+.status{font-size:12px;background:#e4f5eb;color:#17623d;padding:6px 10px;border-radius:20px;white-space:nowrap}
+main{max-width:760px;margin:auto;padding:16px}
+nav{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+nav button{padding:11px 5px;font-size:13px}
+button,.btn{border:0;border-radius:12px;background:var(--blue);color:white;padding:12px 15px;font-weight:650;font-size:15px;cursor:pointer}
+button.secondary{background:#e8eef6;color:var(--navy)}button.danger{background:#a83232}
+button:disabled{opacity:.45;cursor:not-allowed}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #1c35500a}
+h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:0 0 8px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 6px}
+input,textarea,select{width:100%;border:1px solid #cbd6e3;border-radius:10px;padding:11px;font:inherit;background:white;color:var(--ink)}
+textarea{min-height:105px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{flex:1}
+.small{color:var(--muted);font-size:13px}.lesson{border:1px solid var(--line);border-radius:12px;padding:12px;margin:9px 0}
+.lesson p{white-space:pre-wrap;margin:7px 0}
+.tag{font-size:12px;color:var(--muted)}
+.hidden{display:none!important}.choice{display:block;text-align:left;width:100%;margin:8px 0;background:#edf3fa;color:var(--ink);border:1px solid #d5e0ed}
+.choice.selected{border:2px solid var(--blue);background:#e3efff}
+.feedback{padding:12px;border-radius:12px;background:#eef7f1;margin-top:12px}
+.progress{height:8px;background:#e5ebf2;border-radius:10px;overflow:hidden}.progress span{display:block;height:100%;background:#23885b;width:0}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+
+.schedule-card{border:1px solid var(--line);border-radius:14px;padding:13px;margin:10px 0;background:#fff}
+.schedule-card h3{margin:0 0 7px;color:var(--navy)}
+.schedule-meta{display:flex;flex-wrap:wrap;gap:7px;margin:7px 0}
+.schedule-chip{display:inline-flex;align-items:center;background:#edf3fa;color:var(--navy);border-radius:20px;padding:5px 9px;font-size:12px;font-weight:650}
+.schedule-role{margin:8px 0 0;padding-top:8px;border-top:1px solid var(--line)}
+.schedule-role:first-child{border-top:0;padding-top:0}
+.schedule-role b{color:var(--navy)}
+.schedule-empty{padding:14px;border:1px dashed #cbd6e3;border-radius:12px;color:var(--muted);text-align:center;margin-top:10px}
+.schedule-section-title{margin:18px 0 8px;font-size:16px;color:var(--navy)}
+.schedule-note{background:#f1f6fc;border-left:4px solid var(--blue);border-radius:8px;padding:11px 13px;margin:12px 0;color:#344b65;font-size:13px}
+
+</style>
+</head>
+<body>
+<header>
+ <div class="top"><h1>📚 PWOFESÈ MWEN</h1><span class="status" id="net">Mòd lokal</span></div>
+ <p>Etidye • Pratike • Verifye sa ou aprann • Vèsyon 10</p>
+</header>
+<main>
+ <nav>
+  <button class="secondary" data-tab="lessons">Leson mwen</button>
+  <button class="secondary" data-tab="quiz">Egzamen</button>
+  <button class="secondary" data-tab="results">Pwogrè</button>
+  <button class="secondary" data-tab="bible66">📖 66 liv Bib la</button>
+  <button class="secondary" data-tab="abbrev66">🔤 Abreviyasyon 66 liv yo</button>
+  <button class="secondary" data-tab="cleaning">🧹 Netwayaj</button>
+  <button class="secondary" data-tab="hosting">🤝 Akèy</button>
+  <button class="secondary" data-tab="kidsDevotion">👧 Devosyon Timoun</button>
+  <button class="secondary" data-tab="projector">📽️ Sèvis Pwojektè</button>
+ </nav>
+
+ <section id="lessons">
+  <div class="panel">
+   <h2>Ajoute yon leson</h2>
+   <p class="small">Ekri oswa kole tèks leson an. Leson an ap rete sou telefòn sa a.</p>
+   <label for="lessonTitle">Tit leson an</label><input id="lessonTitle" placeholder="Egzanp: Lafwa ak obeyisans">
+   <label for="lessonText">Kontni leson an</label><textarea id="lessonText" placeholder="Kole tèks leson ou la..."></textarea>
+   <button id="saveLesson">Anrejistre leson an</button>
+  </div>
+  <div class="panel" id="documentReader">
+   <h2>📄 Li yon dokiman oswa yon foto</h2>
+   <p class="small">Chwazi yon PDF, yon dokiman Word (.docx), oswa yon foto (JPG, PNG). Aplikasyon an ap eseye ekstrè tèks la pou fè l tounen yon leson.</p>
+   <label for="documentFile">Chwazi fichye a</label>
+   <input id="documentFile" type="file" accept=".pdf,.docx,image/jpeg,image/png,image/webp">
+   <button id="readDocument" style="margin-top:12px">Li dokiman an</button>
+   <p id="readerStatus" class="small" aria-live="polite">Pou PDF ak Word, chwazi fichye a epi peze “Li dokiman an”. Pou foto, aplikasyon an ap itilize OCR. Premye itilizasyon an bezwen Entènèt pou chaje zouti lekti yo.</p>
+   <label for="documentTitle">Tit leson an</label><input id="documentTitle" placeholder="Tit dokiman an oswa leson an">
+   <label for="extractedText">Tèks aplikasyon an jwenn</label><textarea id="extractedText" placeholder="Tèks dokiman an ap parèt la..." style="min-height:180px"></textarea>
+   <button id="saveExtractedLesson" class="secondary">Anrejistre tèks sa kòm yon leson</button>
+   <p class="small">Nòt: PDF ki se foto/eskàn ka pa gen tèks pou ekstrè. OCR foto itilize modèl angle, franse ak panyòl; li ka fè erè sou Kreyòl. Verifye tèks la anvan ou anrejistre l.</p>
+  </div>
+  <div class="panel"><h2>Leson ki anrejistre</h2><div id="lessonList" class="small">Pa gen leson pou kounye a.</div></div>
+  <div class="panel" id="aiQuestionPanel">
+   <h2>🤖 Kreye kesyon otomatikman</h2>
+   <p class="small">Chwazi yon leson ou deja anrejistre. Sistèm lokal la ap prepare jiska 20 kesyon an Kreyòl, ak nivo fasil, mwayen ak difisil melanje. Li pa bezwen API ni koneksyon Entènèt. Verifye yo anvan ou anrejistre yo.</p>
+   <label for="aiLesson">Leson pou IA analize</label><select id="aiLesson"></select>
+   <div class="row">
+    <button id="generateAI">Kreye 20 kesyon</button>
+    <button id="saveAIQuestions" class="secondary" disabled>Anrejistre kesyon yo</button>
+   </div>
+   <p id="aiStatus" class="small" aria-live="polite">Mòd lokal: pa bezwen OpenAI API. Kesyon yo baze sou fraz ki nan leson an; verifye yo anvan ou sove yo.</p>
+   <div id="aiPreview"></div>
+  </div>
+  <div class="panel">
+   <h2>Ajoute kesyon pou egzamen offline</h2>
+   <p class="small">Pou koreksyon otomatik ki mache san Entènèt, anrejistre kesyon ak repons yo davans.</p>
+   <label for="qLesson">Chwazi leson</label><select id="qLesson"></select>
+   <label for="qType">Kalite kesyon</label>
+   <select id="qType"><option value="mcq">Chwa miltip (A, B, C, D)</option><option value="tf">Vrè oswa fo</option><option value="short">Repons kout</option><option value="explain">Eksplikasyon</option><option value="verse">Vèsè ak referans biblik</option></select>
+   <label for="qText">Kesyon an</label><textarea id="qText" placeholder="Ekri kesyon an..."></textarea>
+   <div id="mcqFields">
+    <label>Chwa A</label><input id="a" placeholder="Repons A">
+    <label>Chwa B</label><input id="b" placeholder="Repons B">
+    <label>Chwa C</label><input id="c" placeholder="Repons C">
+    <label>Chwa D</label><input id="d" placeholder="Repons D">
+   </div>
+   <label for="qAnswer">Bon repons / eleman kle yo</label><textarea id="qAnswer" placeholder="Ekri bon repons lan oswa eleman esansyèl yo..."></textarea>
+   <label for="qExplain">Eksplikasyon apre koreksyon (si genyen)</label><textarea id="qExplain" placeholder="Eksplike repons lan..."></textarea>
+   <button id="saveQuestion">Anrejistre kesyon an</button>
+  </div>
+ </section>
+
+ <section id="quiz" class="hidden">
+  <div class="panel">
+   <h2>Kòmanse yon egzamen</h2>
+   <label for="quizLesson">Leson</label><select id="quizLesson"></select>
+   <label for="quizType">Kalite kesyon</label>
+   <select id="quizType"><option value="all">Tout kalite</option><option value="mcq">Chwa miltip</option><option value="tf">Vrè oswa fo</option><option value="short">Repons kout</option><option value="explain">Eksplikasyon</option><option value="verse">Vèsè ak referans</option></select>
+   <button id="startQuiz">Kòmanse</button>
+  </div>
+  <div id="quizArea" class="panel hidden"></div>
+ </section>
+
+ <section id="results" class="hidden">
+  <div class="panel"><h2>Rezilta mwen</h2><div id="resultList" class="small">Ou poko fè egzamen.</div></div>
+ </section>
+
+ <section id="bible66" class="hidden">
+  <div class="panel">
+   <h2>📖 Egzèsis 66 liv Bib la</h2>
+   <p class="small">Egzamen sa a gen 66 kesyon, youn pou chak liv Bib la. Kesyon yo melanje nan yon lòd o aza; yo pa swiv lòd liv Bib la. Pou chak liv, ekri non liv ki vini anvan li ak non liv ki vini apre li. Pou premye oswa dènye liv la, ekri “Pa genyen”. Chak kesyon vo 1 pwen; ou dwe bay toude repons yo kòrèk pou jwenn pwen an.</p>
+   <p><b>Ansyen Testaman:</b> 39 liv • <b>Nouvo Testaman:</b> 27 liv</p>
+   <button id="startBible66">Kòmanse egzèsis 66 kesyon yo</button>
+  </div>
+  <div id="bible66Area" class="panel hidden" aria-live="polite"></div>
+  <div class="panel"><h3>Dènye rezilta egzèsis sa a</h3><div id="bible66Results" class="small">Ou poko fè egzèsis 66 liv Bib la.</div></div>
+ </section>
+
+
+ <section id="cleaning" class="hidden">
+  <div class="panel">
+   <h2>🧹 PWOGRAM NETWAYAJ — NOVANM 2026</h2>
+   <p class="small">Pwogram Novanm 2026 la deja entegre nan aplikasyon an. Ou pa bezwen mete PDF ni kole tèks. Chèche non yon moun, dat oswa jou sèvis la.</p>
+   <label for="cleaningMonth">Mwa pwogram nan</label>
+   <select id="cleaningMonth"></select>
+   <label for="cleaningSearch">Chèche non, dat, jou oswa responsablite</label>
+   <input id="cleaningSearch" placeholder="Egzanp: ANALISE, 04, Mèkredi oswa Netwayaj">
+   <p class="small" id="cleaningCount"></p>
+   <div id="cleaningResults" aria-live="polite"></div>
+  </div>
+ </section>
+
+ <section id="hosting" class="hidden">
+  <div class="panel">
+   <h2>🤝 PWOGRAM AKÈY — NOVANM 2026</h2>
+   <p class="small">Pwogram Akèy Novanm 2026 la deja entegre nan aplikasyon an. Ou pa bezwen mete PDF ni kole tèks. Chèche non yon moun, dat, jou, maten, swa oswa responsablite.</p>
+   <label for="hostingMonth">Mwa pwogram nan</label>
+   <select id="hostingMonth"></select>
+   <label for="hostingSearch">Chèche non, dat, jou, maten, swa oswa responsablite</label>
+   <input id="hostingSearch" placeholder="Egzanp: MARQUEZ, ANA-LOUISE, 15, Antre">
+   <p class="small" id="hostingCount"></p>
+   <div id="hostingResults" aria-live="polite"></div>
+  </div>
+ </section>
+
+
+ <section id="kidsDevotion" class="hidden">
+  <div class="panel">
+   <h2>👧 PWOGRAM DEVOSYON TIMOUN — NOVANM 2026</h2>
+   <p class="small">Nivo 9 • Dimanch maten. Chèche non yon moun, gwoup, dat, jou oswa responsablite. Tout enfòmasyon ki nan pwogram nan deja entegre.</p>
+   <label for="devotionSearch">Chèche enfòmasyon</label>
+   <input id="devotionSearch" type="search" placeholder="Egzanp: Dieunayrose, Gwoup 2, 15, Netwayaj">
+   <p class="small" id="devotionCount" aria-live="polite"></p>
+   <h3 class="schedule-section-title">1. Distribisyon twa gwoup yo</h3>
+   <div id="devotionGroupResults" aria-live="polite"></div>
+   <h3 class="schedule-section-title">2. Wotasyon pou Novanm 2026</h3>
+   <div id="devotionRotationResults" aria-live="polite"></div>
+   <div class="schedule-note">Wotasyon an montre gwoup ki gen sèvis chak dimanch. Responsablite chak gwoup se sa ki ekri nan distribisyon gwoup yo.</div>
+   <p class="small">Sèvi ak lanmou • Disiplin • Respè</p>
+  </div>
+ </section>
+
+ <section id="projector" class="hidden">
+  <div class="panel">
+   <h2>📽️ PWOGRAM SÈVIS PWOJEKTÈ — NOVANM 2026</h2>
+   <p class="small">Objektif: Prepare chante ak prezantasyon yo pare pou chak sèvis. Chèche non yon responsab, dat, jou oswa lè sèvis la.</p>
+   <label for="projectorSearch">Chèche enfòmasyon</label>
+   <input id="projectorSearch" type="search" placeholder="Egzanp: Djounaylie, 07, Samdi, Maten oswa Swa">
+   <p class="small" id="projectorCount" aria-live="polite"></p>
+   <div id="projectorResults" aria-live="polite"></div>
+   <div class="schedule-note">Rapèl: Tout moun ki gen sèvis dwe rive bonè pou prepare chante, prezantasyon ak lòt materyèl ki nesesè. Ann sèvi avèk disiplin, respè, lanmou ak fidelite.</div>
+  </div>
+ </section>
+
+ <section id="abbrev66" class="hidden">
+  <div class="panel">
+   <h2>🔤 Egzèsis abrevyasyon 66 liv Bib la</h2>
+   <p class="small">Egzèsis la gen 2 kalite kesyon pou chak liv: non liv → abrevyasyon, epi abrevyasyon → non liv. Tout kesyon yo melanje o aza; chak kesyon vo 1 pwen.</p>
+   <p><b>Ansyen Testaman:</b> 39 liv • <b>Nouvo Testaman:</b> 27 liv</p>
+   <button id="startAbbrev66">Kòmanse egzèsis abrevyasyon yo (132 kesyon)</button>
+  </div>
+  <div id="abbrev66Area" class="panel hidden" aria-live="polite"></div>
+  <div class="panel"><h3>Dènye rezilta egzèsis abrevyasyon an</h3><div id="abbrev66Results" class="small">Ou poko fè egzèsis abrevyasyon yo.</div></div>
+ </section>
+</main>
+<footer>Done yo rete nan navigatè telefòn sa a. Fè yon kopi sekirite regilyèman.</footer>
+
+<style>
+#pm-lock-screen{position:fixed;inset:0;background:rgba(9,25,45,.97);z-index:99999;display:none;align-items:center;justify-content:center;padding:18px}
+#pm-lock-card{background:#fff;color:#172435;border-radius:18px;padding:22px;max-width:420px;width:100%;box-shadow:0 12px 40px #0005}
+#pm-lock-card h2{margin:0 0 8px;font-size:22px}
+#pm-lock-card p{color:#65758a;font-size:14px}
+#pm-lock-card input{width:100%;padding:13px;border:1px solid #ccd6e2;border-radius:10px;font-size:16px;margin:8px 0}
+#pm-lock-card button{width:100%;margin-top:8px}
+#pm-lock-error{color:#b42318;min-height:20px;font-size:13px}
+</style>
+<div id="pm-lock-screen" role="dialog" aria-modal="true" aria-labelledby="pm-lock-title">
+ <div id="pm-lock-card">
+  <h2 id="pm-lock-title">🔒 Seksyon pwoteje</h2>
+  <p id="pm-lock-description">Antre modpas seksyon sa a pou kontinye.</p>
+  <input id="pm-lock-password" type="password" autocomplete="current-password" placeholder="Antre modpas la">
+  <div id="pm-lock-error"></div>
+  <button id="pm-lock-submit">Debloke seksyon an</button>
+  <button id="pm-lock-cancel" class="secondary">Anile</button>
+ </div>
+</div>
+<script>
+(() => {
+ const protectedTabs={
+  cleaning:{name:"Netwayaj",hash:"e7d088d3722c929150477c4b94a23b824a27c1a739ee84532348e1eecb1a5084"},
+  hosting:{name:"Akèy",hash:"7aa1a934b43d3f0efb0f152b0e8aaf37cbc09212f29f1b3cef6923de5dd1ecda"},
+  kidsDevotion:{name:"Devosyon Timoun",hash:"69f41ed729f548e2905c5cf0da3f29b5c691eab7a2b6b48bdeafb0acf0872ed6"},
+  projector:{name:"Sèvis Pwojektè",hash:"2f056e7346ff12582258b73c3bc7758a2296e5a77cbdaa74cf6ca18918af5125"}
+ };
+ const screen=document.getElementById("pm-lock-screen");
+ const field=document.getElementById("pm-lock-password");
+ const error=document.getElementById("pm-lock-error");
+ const unlocked=new Set(); let pending=null;
+ async function digest(v){
+  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v));
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("");
+ }
+ function openTab(id){
+  document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));
+  const target=document.getElementById(id); if(target)target.classList.remove("hidden");
+ }
+ function close(){screen.style.display="none";field.value="";error.textContent="";pending=null;}
+ document.querySelectorAll("[data-tab]").forEach(button=>{
+  button.addEventListener("click",event=>{
+   const id=button.dataset.tab;
+   if(!protectedTabs[id])return;
+   event.preventDefault();event.stopImmediatePropagation();
+   if(unlocked.has(id)){openTab(id);return;}
+   pending=id;document.getElementById("pm-lock-title").textContent="🔒 "+protectedTabs[id].name;
+   document.getElementById("pm-lock-description").textContent="Antre modpas pou seksyon "+protectedTabs[id].name+".";
+   error.textContent="";screen.style.display="flex";field.focus();
+  },true);
+ });
+ async function submit(){
+  if(!pending)return;
+  if(!field.value){error.textContent="Tanpri antre modpas la.";return;}
+  try{
+   if(await digest(field.value)===protectedTabs[pending].hash){
+    const id=pending;unlocked.add(id);close();openTab(id);
+   }else{error.textContent="Modpas la pa kòrèk. Eseye ankò.";field.select();}
+  }catch(e){error.textContent="Verifikasyon pa disponib nan navigatè sa a.";}
+ }
+ document.getElementById("pm-lock-submit").addEventListener("click",submit);
+ field.addEventListener("keydown",e=>{if(e.key==="Enter")submit();});
+ document.getElementById("pm-lock-cancel").addEventListener("click",close);
+ screen.addEventListener("click",e=>{if(e.target===screen)close();});
+})();
+</script>
+\n<script>
+const $=id=>document.getElementById(id);
+let lessons=JSON.parse(localStorage.getItem('pm_lessons')||'[]');
+let questions=JSON.parse(localStorage.getItem('pm_questions')||'[]');
+let results=JSON.parse(localStorage.getItem('pm_results')||'[]');
+let active=[],index=0,score=0,answers=[];
+const save=()=>{localStorage.setItem('pm_lessons',JSON.stringify(lessons));localStorage.setItem('pm_questions',JSON.stringify(questions));localStorage.setItem('pm_results',JSON.stringify(results));};
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function refresh(){
+ $('lessonList').innerHTML=lessons.length?lessons.map(l=>`<div class="lesson"><b>${esc(l.title)}</b><p>${esc(l.text.slice(0,180))}${l.text.length>180?'…':''}</p><div class="row"><span class="tag">${questions.filter(q=>q.lessonId===l.id).length} kesyon anrejistre</span><button class="secondary" onclick="deleteLesson('${l.id}')">Efase</button></div></div>`).join(''):'Pa gen leson pou kounye a.';
+ for(const id of ['qLesson','quizLesson','aiLesson'])$(id).innerHTML=lessons.map(l=>`<option value="${l.id}">${esc(l.title)}</option>`).join('')||'<option value="">Ajoute yon leson anvan</option>';
+ $('resultList').innerHTML=results.length?results.slice().reverse().map(r=>`<div class="lesson"><b>${esc(r.title)}</b><p>${r.score}/${r.total} bon repons • ${r.date}</p></div>`).join(''):'Ou poko fè egzamen.';
+}
+window.deleteLesson=id=>{if(confirm('Efase leson sa a ak kesyon li yo?')){lessons=lessons.filter(l=>l.id!==id);questions=questions.filter(q=>q.lessonId!==id);save();refresh();}};
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));$(b.dataset.tab).classList.remove('hidden');});
+$('qType').onchange=()=>{$('mcqFields').classList.toggle('hidden',$('qType').value!=='mcq');};
+$('saveLesson').onclick=()=>{let title=$('lessonTitle').value.trim(),text=$('lessonText').value.trim();if(!title||!text)return alert('Tanpri mete tit ak kontni leson an.');lessons.push({id:crypto.randomUUID(),title,text});$('lessonTitle').value='';$('lessonText').value='';save();refresh();alert('Leson an anrejistre.');};
+$('saveQuestion').onclick=()=>{let lessonId=$('qLesson').value,type=$('qType').value,question=$('qText').value.trim(),answer=$('qAnswer').value.trim();if(!lessonId||!question||!answer)return alert('Chwazi yon leson, ekri kesyon an ak repons lan.');let options=type==='mcq'?['a','b','c','d'].map(x=>$(x).value.trim()):[];if(type==='mcq'&&options.some(x=>!x))return alert('Ranpli kat chwa yo.');questions.push({id:crypto.randomUUID(),lessonId,type,question,answer,options,explain:$('qExplain').value.trim()});['qText','qAnswer','qExplain','a','b','c','d'].forEach(id=>$(id).value='');save();refresh();alert('Kesyon an anrejistre pou egzamen offline.');};
+let aiDraft=[];
+// Kreye kesyon dirèkteman nan navigatè a. Pa gen apèl API ni kle sekrè.
+function localQuestionGenerator(title, rawText, count=20){
+ const stop=new Set(('ap avèk anba anpil apre asire avan bagay byen chak tankou konsa kont kòman dapre depi dwe e ekri elèv enpòtan eske èske etid etidye fè fòm gen lòt menm mwen nan nanm nan nouvo oswa paske pou pa plis pran premye pwen pwoblèm sa se sou tan tout tou travay itilize youn yon yo li nou ou mwen te ki ke la lè an ak nan').split(/\s+/));
+ const clean=s=>s.replace(/\s+/g,' ').replace(/[“”]/g,'"').trim();
+ let sentences=(rawText.match(/[^.!?\n]+[.!?]?/g)||[]).map(clean).filter(x=>x.length>=35 && x.split(/\s+/).length>=6);
+ if(sentences.length<3) sentences=rawText.split(/\n+/).map(clean).filter(x=>x.length>=35 && x.split(/\s+/).length>=6);
+ if(!sentences.length) throw new Error('Leson sa a twò kout oswa li pa gen ase fraz klè. Ajoute plis tèks, omwen 3 fraz konplè, epi eseye ankò.');
+ const wordsOf=s=>[...new Set((s.toLocaleLowerCase('ht').match(/[a-zà-öø-ÿ0-9][a-zà-öø-ÿ0-9'-]{3,}/g)||[]).filter(w=>!stop.has(w) && !/^\d+$/.test(w)))];
+ let facts=[];
+ sentences.forEach((sentence,si)=>{
+   const words=wordsOf(sentence).sort((a,b)=>b.length-a.length);
+   words.slice(0,Math.min(5,words.length)).forEach((word,wi)=>facts.push({sentence,word,si,wi}));
+ });
+ // Pa sèvi ak menm mo pou plizyè kesyon youn apre lòt si gen lòt opsyon.
+ let seen=new Set(); facts=facts.filter(f=>{let k=f.si+'|'+f.word;if(seen.has(k))return false;seen.add(k);return true;});
+ if(facts.length<Math.min(count,8)) throw new Error('Mwen pa jwenn ase enfòmasyon klè nan leson sa a. Verifye tèks la oswa ajoute plis kontni.');
+ const distractorPool=[...new Set(facts.map(f=>f.word))];
+ const levels=['Fasil','Mwayen','Difisil'];
+ const out=[];
+ for(let i=0;i<count;i++){
+   const f=facts[i%facts.length];
+   const distractors=distractorPool.filter(w=>w!==f.word && !f.sentence.toLocaleLowerCase('ht').includes(w)).slice((i*3)%Math.max(1,distractorPool.length-1));
+   const d=[...new Set(distractors)].slice(0,3);
+   while(d.length<3){const fallback=['kominote','obeyisans','konpreyansyon','responsablite','edikasyon','devlopman'];const w=fallback[(i+d.length)%fallback.length];if(w!==f.word&&!d.includes(w))d.push(w);else break;}
+   const blank=f.sentence.replace(new RegExp('\\b'+f.word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i'),'________');
+   const type=i%4===0||i%4===1?'mcq':i%4===2?'tf':'short';
+   const level=levels[i%3];
+   if(type==='mcq'){
+     const opts=[f.word,...d.slice(0,3)];
+     // Melanje opsyon yon fason ki repete menm rezilta a pou menm leson an.
+     const shift=i%4;const shuffled=opts.slice(shift).concat(opts.slice(0,shift));
+     out.push({type,level,question:'Dapre leson an, ki mo ki konplete fraz sa a?\n'+blank,options:shuffled,answer:String(shuffled.indexOf(f.word)),explanation:'Mo ki manke a parèt nan fraz orijinal leson an: '+f.sentence});
+   }else if(type==='tf'){
+     const falseWord=d[0]||'lòt bagay';const isTrue=i%2===0;const statement=isTrue?f.sentence:f.sentence.replace(new RegExp('\\b'+f.word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i'),falseWord);
+     out.push({type,level,question:'Dapre sa leson an ekri, deklarasyon sa a vre oswa fo?\n'+statement,answer:isTrue?'Vrè':'Fo',explanation:isTrue?'Deklarasyon sa a soti nan leson an.':'Leson an di pito: '+f.sentence});
+   }else{
+     out.push({type:'short',level,question:'Ki mo ki manke nan fraz leson sa a?\n'+blank,answer:f.word,explanation:'Nan tèks leson an, fraz la se: '+f.sentence});
+   }
+ }
+ return out;
+}
+$('generateAI').onclick=()=>{
+ const lesson=lessons.find(l=>l.id===$('aiLesson').value);
+ if(!lesson)return alert('Anrejistre oswa chwazi yon leson anvan.');
+ if(lesson.text.length>50000)return alert('Kontni leson an twò long. Tanpri separe l an plizyè leson ki pi kout.');
+ $('generateAI').disabled=true;$('saveAIQuestions').disabled=true;$('aiPreview').innerHTML='';
+ $('aiStatus').textContent='M ap analize tèks leson an sou telefòn nan epi prepare kesyon yo...';
+ try{
+  aiDraft=localQuestionGenerator(lesson.title,lesson.text,20).map(q=>({...q,selected:true}));
+  renderAIPreview();$('saveAIQuestions').disabled=false;
+  $('aiStatus').textContent='20 kesyon otomatik pare. Yo baze sou fraz nan dokiman an; verifye yo, paske sistèm lokal la pa yon IA tankou ChatGPT.';
+ }catch(err){$('aiStatus').textContent=err.message||'Nou pa rive prepare kesyon yo. Verifye si leson an gen ase tèks.';}
+ finally{$('generateAI').disabled=false;}
+};
+function renderAIPreview(){
+ $('aiPreview').innerHTML=aiDraft.map((q,i)=>`<div class="lesson"><label style="display:flex;gap:9px;align-items:flex-start"><input type="checkbox" data-ai-select="${i}" ${q.selected?'checked':''} style="width:auto;margin-top:4px"><span><b>${i+1}. ${esc(q.question)}</b><br><span class="tag">${esc(({mcq:'Chwa miltip',tf:'Vrè oswa fo',short:'Repons kout',explain:'Eksplikasyon'})[q.type]||q.type)} • Nivo ${esc(q.level)}</span></span></label>${q.type==='mcq'?`<ol type="A">${q.options.map(o=>`<li>${esc(o)}</li>`).join('')}</ol>`:''}<p><b>Bon repons:</b> ${esc(q.type==='mcq'?q.options[Number(q.answer)]:q.answer)}</p><p class="small">${esc(q.explanation)}</p></div>`).join('');
+ $('aiPreview').querySelectorAll('[data-ai-select]').forEach(el=>el.onchange=()=>{aiDraft[Number(el.dataset.aiSelect)].selected=el.checked;});
+}
+$('saveAIQuestions').onclick=()=>{
+ const lessonId=$('aiLesson').value;const chosen=aiDraft.filter(q=>q.selected);
+ if(!chosen.length)return alert('Chwazi omwen yon kesyon pou anrejistre.');
+ const mapped=chosen.map(q=>({id:crypto.randomUUID(),lessonId,type:q.type,question:q.question,options:q.type==='mcq'?q.options:[],answer:q.type==='mcq'?String(Number(q.answer)):q.type==='tf'?(q.answer==='Vrè'?'true':'false'):q.answer,explain:q.explanation||''}));
+ questions.push(...mapped);save();refresh();aiDraft=[];$('aiPreview').innerHTML='';$('saveAIQuestions').disabled=true;$('aiStatus').textContent=`${mapped.length} kesyon anrejistre. Yo disponib pou egzamen offline.`;alert(`${mapped.length} kesyon anrejistre pou egzamen.`);
+};
+function typeName(t){return {mcq:'Chwa miltip',tf:'Vrè oswa fo',short:'Repons kout',explain:'Eksplikasyon',verse:'Vèsè ak referans'}[t];}
+$('startQuiz').onclick=()=>{let lid=$('quizLesson').value,t=$('quizType').value;active=questions.filter(q=>q.lessonId===lid&&(t==='all'||q.type===t));if(!active.length)return alert('Pa gen kesyon nan kategori sa a. Ajoute kesyon davans pou itilize egzamen offline.');index=0;score=0;answers=[];$('quizArea').classList.remove('hidden');showQuestion();};
+function showQuestion(){let q=active[index];let html=`<div class="row"><span class="tag">${typeName(q.type)}</span><span class="tag">Kesyon ${index+1} sou ${active.length}</span></div><div class="progress"><span style="width:${index/active.length*100}%"></span></div><h2 style="margin-top:16px">${esc(q.question)}</h2>`;
+ if(q.type==='mcq')html+=q.options.map((o,i)=>`<button class="choice" data-choice="${i}">${'ABCD'[i]}. ${esc(o)}</button>`).join('');
+ else if(q.type==='tf')html+='<button class="choice" data-choice="true">Vrè</button><button class="choice" data-choice="false">Fo</button>';
+ else html+='<label>Repons mwen</label><textarea id="learnerAnswer" placeholder="Ekri repons ou..."></textarea>';
+ html+='<div id="feedback"></div><div class="row" style="margin-top:14px"><button id="checkAnswer">Verifye repons</button><button id="nextQuestion" class="secondary hidden">Pwochen kesyon</button></div>';
+ $('quizArea').innerHTML=html;let selected=null;
+ $('quizArea').querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{selected=b.dataset.choice;$('quizArea').querySelectorAll('[data-choice]').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');});
+ $('checkAnswer').onclick=()=>{let given=q.type==='mcq'?selected:q.type==='tf'?selected:$('learnerAnswer').value.trim();if(!given)return alert('Tanpri bay repons ou.');let correct=false;if(q.type==='mcq')correct=Number(given)===Number(q.answer);else if(q.type==='tf')correct=given.toLowerCase()===q.answer.toLowerCase();else correct=given.toLowerCase().trim()===q.answer.toLowerCase().trim();if(correct)score++;answers.push({given,correct});$('feedback').innerHTML=`<div class="feedback"><b>${correct?'Bon repons!':'Repons lan pa koresponn egzakteman.'}</b><p><b>Repons referans:</b> ${esc(q.type==='mcq'?q.options[Number(q.answer)]:q.answer)}</p>${q.explain?`<p>${esc(q.explain)}</p>`:''}${['short','explain','verse'].includes(q.type)?'<p class="small">Pou kesyon sa a, koreksyon an konpare tèks la egzakteman. Yon repons ki gen menm sans men ki ekri yon lòt jan ka bezwen evalyasyon manyèl.</p>':''}</div>`;$('checkAnswer').disabled=true;$('nextQuestion').classList.remove('hidden');};
+ $('nextQuestion').onclick=()=>{index++;if(index<active.length)showQuestion();else finishQuiz();};
+}
+function finishQuiz(){let lid=$('quizLesson').value,l=lessons.find(x=>x.id===lid),r={title:l?.title||'Egzamen',score,total:active.length,date:new Date().toLocaleString('ht-HT')};results.push(r);save();$('quizArea').innerHTML=`<h2>Egzamen fini!</h2><p>Rezilta ou: <b>${score} sou ${active.length}</b></p><div class="progress"><span style="width:${score/active.length*100}%"></span></div><p>${Math.round(score/active.length*100)}% repons egzak.</p><button onclick="document.querySelector('[data-tab=results]').click()">Gade pwogrè mwen</button>`;refresh();}
+// Lekti fichye PDF, DOCX ak foto. Zouti yo chaje sou entènèt premye fwa.
+async function loadScript(src){return new Promise((resolve,reject)=>{let old=[...document.scripts].find(x=>x.src===src);if(old){if(old.dataset.loaded==='1')return resolve();old.addEventListener('load',resolve,{once:true});old.addEventListener('error',reject,{once:true});return;}let sc=document.createElement('script');sc.src=src;sc.onload=()=>{sc.dataset.loaded='1';resolve();};sc.onerror=()=>reject(new Error('Nou pa rive chaje zouti lekti a. Verifye koneksyon Entènèt la.'));document.head.appendChild(sc);});}
+$('readDocument').onclick=async()=>{
+ const file=$('documentFile').files[0]; if(!file)return alert('Tanpri chwazi yon PDF, Word oswa foto anvan.');
+ const status=$('readerStatus');const out=$('extractedText');out.value='';$('readDocument').disabled=true;
+ try{
+  status.textContent='M ap li fichye a. Tanpri tann...'; let text=''; const name=file.name;
+  if(file.type==='application/pdf'||name.toLowerCase().endsWith('.pdf')){
+   await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+   if(!window.pdfjsLib)throw new Error('Zouti PDF la pa disponib.');
+   pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+   const data=new Uint8Array(await file.arrayBuffer());const pdf=await pdfjsLib.getDocument({data}).promise;
+   for(let n=1;n<=pdf.numPages;n++){status.textContent=`M ap li paj ${n} sou ${pdf.numPages}...`;const page=await pdf.getPage(n);const content=await page.getTextContent();text+=content.items.map(x=>x.str).join(' ')+'\n\n';}
+   if(!text.trim())throw new Error('Mwen pa jwenn tèks nan PDF sa a. Li ka yon dokiman eskane/foto. Eseye voye foto paj yo youn apre lòt pou OCR.');
+  }else if(name.toLowerCase().endsWith('.docx')||file.type==='application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+   await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js');
+   const result=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});text=result.value;
+  }else if(file.type.startsWith('image/')){
+   await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');
+   if(!window.Tesseract)throw new Error('Zouti OCR la pa disponib.');
+   status.textContent='M ap rekonèt mo ki sou foto a. Sa ka pran kèk minit...';
+   const worker=await Tesseract.createWorker('eng+fra+spa');
+   const result=await worker.recognize(file);text=result.data.text;await worker.terminate();
+  }else{throw new Error('Fòma sa a poko sipòte. Itilize PDF, DOCX, JPG, PNG oswa WEBP.');}
+  if(!text.trim())throw new Error('Mwen pa jwenn tèks nan fichye sa a.');
+  out.value=text.trim();$('documentTitle').value=name.replace(/\.[^.]+$/,'');status.textContent=`Mwen jwenn tèks la. Verifye l epi anrejistre l kòm yon leson. (${text.trim().length} karaktè)`;
+ }catch(err){status.textContent=err.message||'Gen yon pwoblèm pandan lekti a.';}
+ finally{$('readDocument').disabled=false;}
+};
+$('saveExtractedLesson').onclick=()=>{let title=$('documentTitle').value.trim(),text=$('extractedText').value.trim();if(!title||!text)return alert('Mete yon tit epi verifye tèks la anvan.');lessons.push({id:crypto.randomUUID(),title,text});save();refresh();alert('Dokiman an anrejistre kòm yon leson. Kounye a ou ka ajoute kesyon sou li.');};
+
+// Egzèsis espesyal: 66 liv Bib la, nan lòd tradisyonèl 39 + 27.
+const bibleBooks = [
+'Jenèz','Egzòd','Levitik','Nonb','Detewonòm','Jozye','Jij','Rit','1 Samyèl','2 Samyèl','1 Wa','2 Wa','1 Kwonik','2 Kwonik','Esdras','Neyemi','Estè','Jòb','Sòm','Pwovèb','Eklezyas','Kantik','Ezayi','Jeremi','Lamantasyon','Ezekyèl','Danyèl','Oze','Jowèl','Amòs','Abdyas','Jonas','Miche','Nawoum','Abakik','Sofoni','Aje','Zakari','Malachi',
+'Matye','Mak','Lik','Jan','Travay','Women','1 Korentyen','2 Korentyen','Galat','Efezyen','Filipyen','Kolosyen','1 Tesalonisyen','2 Tesalonisyen','1 Timote','2 Timote','Tit','Filemon','Ebre','Jak','1 Pyè','2 Pyè','1 Jan','2 Jan','3 Jan','Jid','Revelasyon'
+];
+let bible66Index=0,bible66Score=0,bible66Order=[];
+const normBible=s=>String(s||'').toLocaleLowerCase('ht').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+function bibleExpected(i,side){return side==='before'?(i===0?'Pa genyen':bibleBooks[i-1]):(i===65?'Pa genyen':bibleBooks[i+1]);}
+function renderBible66(){
+ const i=bible66Order[bible66Index],book=bibleBooks[i],area=$('bible66Area');
+ area.innerHTML=`<div class="row"><span class="tag">Kesyon ${bible66Index+1} sou 66</span><span class="tag">Liv la chwazi o aza</span></div><div class="progress"><span style="width:${i/66*100}%"></span></div><h2 style="margin-top:16px">Ki liv ki vini anvan ak apre <b>${esc(book)}</b>?</h2><label for="bibleBefore">Liv ki vini anvan ${esc(book)}</label><input id="bibleBefore" autocomplete="off" placeholder="Ekri non liv la oswa Pa genyen"><label for="bibleAfter">Liv ki vini apre ${esc(book)}</label><input id="bibleAfter" autocomplete="off" placeholder="Ekri non liv la oswa Pa genyen"><div id="bible66Feedback"></div><div class="row" style="margin-top:14px"><button id="checkBible66">Verifye repons</button><button id="nextBible66" class="secondary hidden">Pwochen kesyon</button></div>`;
+ $('checkBible66').onclick=()=>{
+  const before=$('bibleBefore').value.trim(),after=$('bibleAfter').value.trim();
+  if(!before||!after)return alert('Tanpri ranpli toude espas repons yo.');
+  const okBefore=normBible(before)===normBible(bibleExpected(i,'before'));
+  const okAfter=normBible(after)===normBible(bibleExpected(i,'after'));
+  const correct=okBefore&&okAfter;if(correct)bible66Score++;
+  $('bible66Feedback').innerHTML=`<div class="feedback"><b>${correct?'Bon repons! Ou jwenn 1 pwen.':'Repons lan pa konplètman kòrèk. Ou pa jwenn pwen pou kesyon sa a.'}</b><p><b>Liv anvan:</b> ${esc(bibleExpected(i,'before'))} ${okBefore?'✓':'✗'}</p><p><b>Liv apre:</b> ${esc(bibleExpected(i,'after'))} ${okAfter?'✓':'✗'}</p></div>`;
+  $('checkBible66').disabled=true;$('nextBible66').classList.remove('hidden');
+ };
+ $('nextBible66').onclick=()=>{bible66Index++;if(bible66Index<66)renderBible66();else finishBible66();};
+}
+function finishBible66(){
+ const pct=Math.round(bible66Score/66*100),history=JSON.parse(localStorage.getItem('pm_bible66_results')||'[]');
+ const result={score:bible66Score,total:66,percent:pct,date:new Date().toLocaleString('ht-HT')};history.push(result);localStorage.setItem('pm_bible66_results',JSON.stringify(history));
+ $('bible66Area').innerHTML=`<h2>Egzèsis la fini!</h2><p>Rezilta ou: <b>${bible66Score} sou 66</b></p><div class="progress"><span style="width:${pct}%"></span></div><p><b>${pct}%</b> repons kòrèk.</p><button id="retryBible66">Refè egzèsis la</button>`;
+ $('retryBible66').onclick=startBible66;showBible66Results();
+}
+function startBible66(){bible66Index=0;bible66Score=0;bible66Order=Array.from({length:66},(_,i)=>i);for(let i=bible66Order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[bible66Order[i],bible66Order[j]]=[bible66Order[j],bible66Order[i]];} $('bible66Area').classList.remove('hidden');renderBible66();}
+function showBible66Results(){const h=JSON.parse(localStorage.getItem('pm_bible66_results')||'[]');$('bible66Results').innerHTML=h.length?h.slice().reverse().slice(0,5).map(r=>`<div class="lesson"><b>${r.score}/${r.total} pwen (${r.percent}%)</b><p>${esc(r.date)}</p></div>`).join(''):'Ou poko fè egzèsis 66 liv Bib la.';}
+$('startBible66').onclick=startBible66;
+showBible66Results();
+
+
+// Egzèsis abrevyasyon yo: konsève lis abrevyasyon Vèsyon 9 la.
+const bibleAbbreviations = [
+ ['Jenèz','GEN'],['Egzòd','EXO'],['Levitik','LEV'],['Nonb','NUM'],['Detewonòm','DEU'],
+ ['Jozye','JOS'],['Jij','JDG'],['Rit','RUT'],['I Samyèl','1SA'],['II Samyèl','2SA'],
+ ['I Wa','1KI'],['II Wa','2KI'],['I Kwonik','1CH'],['II Kwonik','2CH'],['Esdras','EZR'],
+ ['Neyemi','NEH'],['Estè','EST'],['Jòb','JOB'],['Sòm','PSA'],['Pwovèb','PRO'],
+ ['Eklezyas','ECC'],['Kantik','SON'],['Ezayi','ISA'],['Jeremi','JER'],['Lamantasyon','LAM'],
+ ['Ezekyèl','EZE'],['Danyèl','DAN'],['Oze','HOS'],['Jowèl','JOE'],['Amòs','AMO'],
+ ['Abdyas','OBA'],['Jonas','JON'],['Miche','MIC'],['Nawoum','NAH'],['Abakik','HAB'],
+ ['Sofoni','ZEP'],['Aje','HAG'],['Zakari','ZEC'],['Malachi','MAL'],
+ ['Matye','MAT'],['Mak','MAR'],['Lik','LUK'],['Jan','JOH'],['Travay','ACT'],
+ ['Women','ROM'],['I Korentyen','1CO'],['II Korentyen','2CO'],['Galat','GAL'],
+ ['Efezyen','EPH'],['Filipyen','PHP'],['Kolosyen','COL'],['I Tesalonisyen','1TH'],
+ ['II Tesalonisyen','2TH'],['I Timote','1TI'],['II Timote','2TI'],['Tit','TIT'],
+ ['Filemon','PHM'],['Ebre','HEB'],['Jak','JAM'],['I Pyè','1PE'],['II Pyè','2PE'],
+ ['I Jan','1JO'],['II Jan','2JO'],['III Jan','3JO'],['Jid','JUD'],['Revelasyon','REV']
+];
+const abbrevLabel = code => code.replace(/[A-Z]+/g, part => part[0]+part.slice(1).toLowerCase());
+let abbrev66Index=0,abbrev66Score=0,abbrev66Order=[];
+function renderAbbrev66(){
+ const question=abbrev66Order[abbrev66Index],item=bibleAbbreviations[question.bookIndex],area=$('abbrev66Area');
+ const prompt=question.direction==='bookToCode'
+  ? `Pou jwenn <b>${esc(item[0])}</b>, ki abrevyasyon ou dwe ekri?`
+  : `Abrevyasyon <b>${esc(abbrevLabel(item[1]))}</b> se pou jwenn ki liv?`;
+ const label=question.direction==='bookToCode'?'Ekri abrevyasyon liv la':'Ekri non liv la';
+ const placeholder=question.direction==='bookToCode'?'Egzanp: Gen':'Egzanp: Jenèz';
+ area.innerHTML=`<div class="row"><span class="tag">Kesyon ${abbrev66Index+1} sou ${abbrev66Order.length}</span><span class="tag">Kesyon melanje o aza</span></div><div class="progress"><span style="width:${(abbrev66Index+1)/abbrev66Order.length*100}%"></span></div><h2 style="margin-top:16px">${prompt}</h2><label for="abbrevAnswer">${label}</label><input id="abbrevAnswer" autocomplete="off" autocapitalize="sentences" placeholder="${placeholder}"><div id="abbrevFeedback"></div><div class="row" style="margin-top:14px"><button id="checkAbbrev66">Verifye repons</button><button id="nextAbbrev66" class="secondary hidden">Pwochen kesyon</button></div>`;
+ $('checkAbbrev66').onclick=()=>{
+  const raw=$('abbrevAnswer').value.trim();
+  const normalize=value=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!raw)return alert('Tanpri ekri repons lan.');
+  const expected=question.direction==='bookToCode'?item[1]:item[0];
+  const correct=normalize(raw)===normalize(expected);if(correct)abbrev66Score++;
+  const displayExpected=question.direction==='bookToCode'?abbrevLabel(item[1]):item[0];
+  $('abbrevFeedback').innerHTML=`<div class="feedback"><b>${correct?'Bon repons! Ou jwenn 1 pwen.':'Repons lan pa kòrèk. Ou pa jwenn pwen pou kesyon sa a.'}</b><p><b>Bon repons lan:</b> ${esc(displayExpected)}</p></div>`;
+  $('checkAbbrev66').disabled=true;$('nextAbbrev66').classList.remove('hidden');
+ };
+ $('nextAbbrev66').onclick=()=>{abbrev66Index++;if(abbrev66Index<abbrev66Order.length)renderAbbrev66();else finishAbbrev66();};
+}
+function finishAbbrev66(){
+ const total=abbrev66Order.length,pct=Math.round(abbrev66Score/total*100),history=JSON.parse(localStorage.getItem('pm_abbrev66_results')||'[]');
+ const result={score:abbrev66Score,total,percent:pct,date:new Date().toLocaleString('ht-HT')};history.push(result);localStorage.setItem('pm_abbrev66_results',JSON.stringify(history));
+ $('abbrev66Area').innerHTML=`<h2>Egzèsis la fini!</h2><p>Rezilta ou: <b>${abbrev66Score} sou ${total}</b></p><div class="progress"><span style="width:${pct}%"></span></div><p><b>${pct}%</b> repons kòrèk.</p><button id="retryAbbrev66">Refè egzèsis la</button>`;
+ $('retryAbbrev66').onclick=startAbbrev66;showAbbrev66Results();
+}
+function startAbbrev66(){
+ abbrev66Index=0;abbrev66Score=0;
+ abbrev66Order=bibleAbbreviations.flatMap((item,bookIndex)=>[
+  {bookIndex,direction:'bookToCode'},{bookIndex,direction:'codeToBook'}
+ ]);
+ for(let i=abbrev66Order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[abbrev66Order[i],abbrev66Order[j]]=[abbrev66Order[j],abbrev66Order[i]];}
+ $('abbrev66Area').classList.remove('hidden');renderAbbrev66();
+}
+function showAbbrev66Results(){
+ const h=JSON.parse(localStorage.getItem('pm_abbrev66_results')||'[]');
+ $('abbrev66Results').innerHTML=h.length?h.slice().reverse().slice(0,5).map(r=>`<div class="lesson"><b>${r.score}/${r.total||66} pwen (${r.percent}%)</b><p>${esc(r.date)}</p></div>`).join(''):'Ou poko fè egzèsis abrevyasyon yo.';
+}
+$('startAbbrev66').onclick=startAbbrev66;
+showAbbrev66Results();
+
+
+// Done pwogram Novanm 2026 yo entegre dirèkteman nan aplikasyon an.
+// Itilizatè a pa bezwen telechaje PDF ni kole tèks pou rechèch la mache.
+const cleaningSchedule = [
+ {date:'04 Novanm 2026',day:'Mèkredi',people:['ANALISE','JULIETTE','DENISE','MARQUESE']},
+ {date:'07 Novanm 2026',day:'Samdi',people:['JULIANI','SOLÈNE','MICHELINE','MONIK']},
+ {date:'11 Novanm 2026',day:'Mèkredi',people:['ELIANETTE','ADOU','MISENA','DIEUNISE']},
+ {date:'14 Novanm 2026',day:'Samdi',people:['ASEFI','NERLANDE','MONISE','LUISIA']},
+ {date:'18 Novanm 2026',day:'Mèkredi',people:['EMMANUELA','YVANE','KAMELI','ISOVANE']},
+ {date:'21 Novanm 2026',day:'Samdi',people:['FANETTE','ANGECAR','JUDELINE','RIT']},
+ {date:'25 Novanm 2026',day:'Mèkredi',people:['HUGUETTE','FRIZNA','GUERDA','MANETTE']},
+ {date:'28 Novanm 2026',day:'Samdi',people:['ANASIA','GUERLINE','ELISE','CHRISTIANIA']}
+].map((x,i)=>({...x,id:'clean-'+i,period:'',assignments:[{role:'Netwayaj',people:x.people}],role:'Netwayaj',source:'Pwogram Novanm 2026'}));
+
+const hostingSchedule = [
+ {date:'01 Novanm 2026',day:'Dimanch',period:'Maten',assignments:[{role:'Antre',people:['LEOSTÈN','ANACIA']},{role:'Asanble',people:['FRANK','MIMOZ']},{role:'Twalèt',people:['LENOIR','MIZNA']},{role:'Timoun',people:['ELIANETTE','ANA-LOUISE']}]},
+ {date:'01 Novanm 2026',day:'Dimanch',period:'Swa',assignments:[{role:'Antre',people:['LEOSTÈN','ANACIA']},{role:'Asanble',people:['FRANK','MIMOZ']},{role:'Twalèt',people:['LENOIR','MIZNA']},{role:'Timoun',people:['ELIANETTE','ANA-LOUISE']}]},
+ {date:'04 Novanm 2026',day:'Mèkredi',period:'',assignments:[{role:'Antre',people:['WILSON','ELIANETTE']}]},
+ {date:'07 Novanm 2026',day:'Samdi',period:'',assignments:[{role:'Antre',people:['TEOFIL','SILVIA']}]},
+ {date:'08 Novanm 2026',day:'Dimanch',period:'Maten',assignments:[{role:'Antre',people:['FRANK','YVONI']},{role:'Asanble',people:['WILSON','ANACIA']},{role:'Twalèt',people:['LEOSTÈN','MIMOZ']},{role:'Timoun',people:['ANA-LOUISE','ELIANETTE']}]},
+ {date:'08 Novanm 2026',day:'Dimanch',period:'Swa',assignments:[{role:'Antre',people:['FRANK','YVONI']},{role:'Asanble',people:['WILSON','ANACIA']},{role:'Twalèt',people:['LEOSTÈN','MIMOZ']},{role:'Timoun',people:['ANA-LOUISE','ELIANETTE']}]},
+ {date:'11 Novanm 2026',day:'Mèkredi',period:'',assignments:[{role:'Antre',people:['LEOSTÈN','MARQUEZ']}]},
+ {date:'14 Novanm 2026',day:'Samdi',period:'',assignments:[{role:'Antre',people:['TEOFIL','JILIANI']}]},
+ {date:'15 Novanm 2026',day:'Dimanch',period:'Maten',assignments:[{role:'Antre',people:['WILSON','SILVIA']},{role:'Asanble',people:['LENOIR','MIZNA']},{role:'Twalèt',people:['FRANK','ANA-LOUISE']},{role:'Timoun',people:['ELIANETTE','YVONI']}]},
+ {date:'15 Novanm 2026',day:'Dimanch',period:'Swa',assignments:[{role:'Antre',people:['WILSON','SILVIA']},{role:'Asanble',people:['LENOIR','MIZNA']},{role:'Twalèt',people:['FRANK','ANA-LOUISE']},{role:'Timoun',people:['ELIANETTE','YVONI']}]},
+ {date:'18 Novanm 2026',day:'Mèkredi',period:'',assignments:[{role:'Antre',people:['LEOSTÈN','YVONI']}]},
+ {date:'21 Novanm 2026',day:'Samdi',period:'',assignments:[{role:'Antre',people:['TEOFIL','ELIANETTE']}]},
+ {date:'22 Novanm 2026',day:'Dimanch',period:'Maten',assignments:[{role:'Antre',people:['LENOIR','MIMOZ']},{role:'Asanble',people:['WILSON','YVONI']},{role:'Twalèt',people:['FRANK','SILVIA']},{role:'Timoun',people:['ANACIA','MIZNA']}]},
+ {date:'22 Novanm 2026',day:'Dimanch',period:'Swa',assignments:[{role:'Antre',people:['LENOIR','MIMOZ']},{role:'Asanble',people:['WILSON','YVONI']},{role:'Twalèt',people:['FRANK','SILVIA']},{role:'Timoun',people:['ANACIA','MIZNA']}]},
+ {date:'25 Novanm 2026',day:'Mèkredi',period:'',assignments:[{role:'Antre',people:['FRANK','MARQUEZ']}]},
+ {date:'28 Novanm 2026',day:'Samdi',period:'',assignments:[{role:'Antre',people:['LEOSTÈN','SILVIA']}]},
+ {date:'29 Novanm 2026',day:'Dimanch',period:'Maten',assignments:[{role:'Antre',people:['WILSON','ANACIA']},{role:'Asanble',people:['FRANK','MIZNA']},{role:'Twalèt',people:['LEOSTÈN','ELIANETTE']},{role:'Timoun',people:['YVONI','ANA-LOUISE']}]},
+ {date:'29 Novanm 2026',day:'Dimanch',period:'Swa',assignments:[{role:'Antre',people:['WILSON','ANACIA']},{role:'Asanble',people:['FRANK','MIZNA']},{role:'Twalèt',people:['LEOSTÈN','ELIANETTE']},{role:'Timoun',people:['YVONI','ANA-LOUISE']}]}
+].map((x,i)=>({...x,id:'host-'+i,people:[...new Set(x.assignments.flatMap(a=>a.people))],role:x.assignments.map(a=>a.role).join(', '),source:'Pwogram Novanm 2026'}));
+
+function scheduleNorm(v){return String(v||'').toLocaleLowerCase('ht').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');}
+// Achiv yo rete lokalman. Fòma a se {cleaning:[...], hosting:[...]}.
+// Chak antre achiv dwe gen date, day, period (si genyen), ak assignments.
+function readScheduleArchives(){try{return JSON.parse(localStorage.getItem('pm_schedule_archives')||'{"cleaning":[],"hosting":[]}');}catch(_){return {cleaning:[],hosting:[]};}}
+const scheduleArchives=readScheduleArchives();
+function scheduleMonth(x){const m=String(x.date||'').match(/(Janvye|Fevriye|Mas|Avril|Me|Jen|Jiyè|Out|Septanm|Oktòb|Novanm|Desanm)\s+(\d{4})/i);return m?m[1]+' '+m[2]:'Lòt achiv';}
+function scheduleData(c){const current=c==='cleaning'?cleaningSchedule:hostingSchedule;const archived=Array.isArray(scheduleArchives[c])?scheduleArchives[c]:[];return [...current,...archived];}
+function setupScheduleMonths(c){const items=scheduleData(c),months=[...new Set(items.map(scheduleMonth))];const current='Novanm 2026';months.sort((a,b)=>a===current?-1:b===current?1:a.localeCompare(b,'ht'));$(c+'Month').innerHTML='<option value="Tout">Tout mwa yo</option>'+months.map(m=>`<option value="${esc(m)}">${esc(m)}${m===current?' (pwogram aktyèl)':' (achiv)'}</option>`).join('');}
+function scheduleShow(c){
+ const all=scheduleData(c),month=$(c+'Month').value||'Tout',query=scheduleNorm($(c+'Search').value);
+ const selected=month==='Tout'?all:all.filter(x=>scheduleMonth(x)===month);
+ // Chak mo nan rechèch la ka koresponn ak yon pati diferan nan menm pwogram nan.
+ // Sa pèmèt rechèch tankou: "ANA 15 Dimanch", "Maten Timoun" oswa "JULIETTE Netwayaj".
+ const terms=query.match(/[a-z0-9]+/g)||[];
+ const matches=terms.length?selected.filter(x=>{
+  const searchable=scheduleNorm([
+   x.date,x.day,x.period,x.role,x.source,
+   ...(x.people||[]),
+   ...(x.assignments||[]).flatMap(a=>[a.role,...(a.people||[])])
+  ].join(' '));
+  return terms.every(term=>searchable.includes(term));
+ }):selected;
+ const monthLabel=month==='Tout'?'tout mwa yo':month;
+ $(c+'Count').textContent=`${matches.length} sèvis jwenn sou ${selected.length} sèvis nan ${monthLabel}.`;
+ $(c+'Results').innerHTML=matches.length?matches.map(x=>`<div class="lesson"><b>${esc(x.day||'')} ${esc(x.date||'')}${x.period?' • '+esc(x.period):''}</b>${(x.assignments||[]).map(a=>`<p><b>${esc(a.role||'Responsablite')}:</b> ${esc((a.people||[]).join(', '))}</p>`).join('')}</div>`).join(''):'Pa gen sèvis ki koresponn ak rechèch sa a.';
+}
+['cleaning','hosting'].forEach(c=>{setupScheduleMonths(c);$(c+'Search').oninput=()=>scheduleShow(c);$(c+'Month').onchange=()=>scheduleShow(c);scheduleShow(c);});
+
+
+// Done ofisyèl ki soti nan pwogram Novanm 2026 la.
+const devotionGroups = [
+ {group:'Gwoup 1', assignments:[
+  {role:'Monitè',people:['Louisly Jean','Dieunayrose']},
+  {role:'Netwayaj',people:['Rosedarline','Estivenson']},
+  {role:'Chèche timoun',people:['Ancelot','Laguerre roicarlie']}
+ ]},
+ {group:'Gwoup 2', assignments:[
+  {role:'Monitè',people:['Gueuveca','Tamalie']},
+  {role:'Netwayaj',people:['Dieucilove','Millianette']},
+  {role:'Chèche timoun',people:['Estivenson','Loubens Saint Duc']}
+ ]},
+ {group:'Gwoup 3', assignments:[
+  {role:'Monitè',people:['Rose Darline','Estivenson']},
+  {role:'Netwayaj',people:['Maykervelie','Enaïlove']},
+  {role:'Chèche timoun',people:['Misline','Dieunayrose']}
+ ]}
+];
+const devotionRotation = [
+ {date:'01 Novanm 2026',day:'Dimanch',group:'Gwoup 1',monitors:['Louisly Jean','Dieunayrose']},
+ {date:'08 Novanm 2026',day:'Dimanch',group:'Gwoup 2',monitors:['Gueuveca','Tamalie']},
+ {date:'15 Novanm 2026',day:'Dimanch',group:'Gwoup 3',monitors:['Rose Darline','Estivenson']},
+ {date:'22 Novanm 2026',day:'Dimanch',group:'Gwoup 1',monitors:['Louisly Jean','Dieunayrose']},
+ {date:'29 Novanm 2026',day:'Dimanch',group:'Gwoup 2',monitors:['Gueuveca','Tamalie']}
+];
+const projectorSchedule = [
+ {date:'01 Novanm 2026',day:'Dimanch',period:'Maten',people:['Djounaylie','Esaylie']},
+ {date:'01 Novanm 2026',day:'Dimanch',period:'Swa',people:['Roseline','Djounaylie']},
+ {date:'02 Novanm 2026',day:'Lendi',period:'Swa',people:['Manou','Esaylie']},
+ {date:'04 Novanm 2026',day:'Mèkredi',period:'Swa',people:['Djounaylie','Manou']},
+ {date:'06 Novanm 2026',day:'Vandredi',period:'—',people:['Djounaylie','Roseline']},
+ {date:'07 Novanm 2026',day:'Samdi',period:'Maten',people:['Spelançia','Djounaylie']},
+ {date:'07 Novanm 2026',day:'Samdi',period:'Swa',people:['Djounaylie','Esaylie']},
+ {date:'08 Novanm 2026',day:'Dimanch',period:'Maten',people:['Roseline','Djounaylie']},
+ {date:'08 Novanm 2026',day:'Dimanch',period:'Swa',people:['Manou','Esaylie']},
+ {date:'09 Novanm 2026',day:'Lendi',period:'Swa',people:['Djounaylie','Manou']},
+ {date:'11 Novanm 2026',day:'Mèkredi',period:'Swa',people:['Djounaylie','Roseline']},
+ {date:'13 Novanm 2026',day:'Vandredi',period:'—',people:['Spelançia','Djounaylie']},
+ {date:'14 Novanm 2026',day:'Samdi',period:'Maten',people:['Djounaylie','Esaylie']},
+ {date:'14 Novanm 2026',day:'Samdi',period:'Swa',people:['Roseline','Djounaylie']},
+ {date:'15 Novanm 2026',day:'Dimanch',period:'Maten',people:['Manou','Esaylie']},
+ {date:'15 Novanm 2026',day:'Dimanch',period:'Swa',people:['Djounaylie','Manou']},
+ {date:'16 Novanm 2026',day:'Lendi',period:'Swa',people:['Djounaylie','Roseline']},
+ {date:'18 Novanm 2026',day:'Mèkredi',period:'Swa',people:['Spelançia','Djounaylie']},
+ {date:'20 Novanm 2026',day:'Vandredi',period:'—',people:['Djounaylie','Esaylie']},
+ {date:'21 Novanm 2026',day:'Samdi',period:'Maten',people:['Roseline','Djounaylie']},
+ {date:'21 Novanm 2026',day:'Samdi',period:'Swa',people:['Manou','Esaylie']},
+ {date:'22 Novanm 2026',day:'Dimanch',period:'Maten',people:['Djounaylie','Manou']},
+ {date:'22 Novanm 2026',day:'Dimanch',period:'Swa',people:['Djounaylie','Roseline']},
+ {date:'23 Novanm 2026',day:'Lendi',period:'Swa',people:['Spelançia','Djounaylie']},
+ {date:'25 Novanm 2026',day:'Mèkredi',period:'Swa',people:['Djounaylie','Esaylie']},
+ {date:'27 Novanm 2026',day:'Vandredi',period:'—',people:['Roseline','Djounaylie']},
+ {date:'28 Novanm 2026',day:'Samdi',period:'Maten',people:['Manou','Esaylie']},
+ {date:'28 Novanm 2026',day:'Samdi',period:'Swa',people:['Djounaylie','Manou']},
+ {date:'29 Novanm 2026',day:'Dimanch',period:'Maten',people:['Djounaylie','Roseline']},
+ {date:'29 Novanm 2026',day:'Dimanch',period:'Swa',people:['Spelançia','Djounaylie']},
+ {date:'30 Novanm 2026',day:'Lendi',period:'Swa',people:['Djounaylie','Esaylie']}
+];
+function scheduleNorm(v){
+ return String(v||'').toLocaleLowerCase('ht').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+}
+function scheduleTerms(q){return (String(q||'').toLocaleLowerCase('ht').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').match(/[a-z0-9]+/g)||[]);}
+function scheduleMatches(fields,terms){
+ if(!terms.length)return true;
+ const haystack=scheduleNorm(fields.join(' '));
+ return terms.every(term=>haystack.includes(term));
+}
+function showDevotion(){
+ const terms=scheduleTerms($('devotionSearch').value);
+ const groups=devotionGroups.filter(g=>scheduleMatches(
+  [g.group,...g.assignments.flatMap(a=>[a.role,...a.people])],terms));
+ const rotations=devotionRotation.filter(r=>scheduleMatches(
+  [r.date,r.day,r.group,...r.monitors],terms));
+ const total=groups.length+rotations.length;
+ $('devotionCount').textContent=terms.length
+  ? `${total} rezilta jwenn: ${groups.length} gwoup ak ${rotations.length} dat sèvis.`
+  : `Tout pwogram nan: ${devotionGroups.length} gwoup ak ${devotionRotation.length} dat sèvis.`;
+ $('devotionGroupResults').innerHTML=groups.length?groups.map(g=>`
+  <div class="schedule-card">
+   <h3>${esc(g.group)}</h3>
+   ${g.assignments.map(a=>`<div class="schedule-role"><b>${esc(a.role)}:</b> ${esc(a.people.join(' + '))}</div>`).join('')}
+  </div>`).join(''):'<div class="schedule-empty">Pa gen gwoup ki koresponn ak rechèch sa a.</div>';
+ $('devotionRotationResults').innerHTML=rotations.length?rotations.map(r=>`
+  <div class="schedule-card">
+   <div class="schedule-meta"><span class="schedule-chip">${esc(r.date)}</span><span class="schedule-chip">${esc(r.day)}</span><span class="schedule-chip">${esc(r.group)}</span></div>
+   <div><b>Monitè yo:</b> ${esc(r.monitors.join(' + '))}</div>
+  </div>`).join(''):'<div class="schedule-empty">Pa gen dat sèvis ki koresponn ak rechèch sa a.</div>';
+}
+function showProjector(){
+ const terms=scheduleTerms($('projectorSearch').value);
+ const matches=projectorSchedule.filter(r=>scheduleMatches(
+  [r.date,r.day,r.period,...r.people,'Sèvis','Pwojektè','Responsab pwojektè'],terms));
+ $('projectorCount').textContent=terms.length
+  ? `${matches.length} sèvis jwenn sou ${projectorSchedule.length} sèvis nan Novanm 2026.`
+  : `${projectorSchedule.length} sèvis nan pwogram Novanm 2026 la.`;
+ $('projectorResults').innerHTML=matches.length?matches.map(r=>`
+  <div class="schedule-card">
+   <div class="schedule-meta"><span class="schedule-chip">${esc(r.date)}</span><span class="schedule-chip">${esc(r.day)}</span><span class="schedule-chip">${r.period==='—'?'Sèvis pa presize':esc(r.period)}</span></div>
+   <div><b>Responsab pwojektè:</b> ${esc(r.people.join(' – '))}</div>
+  </div>`).join(''):'<div class="schedule-empty">Pa gen sèvis ki koresponn ak rechèch sa a.</div>';
+}
+$('devotionSearch').addEventListener('input',showDevotion);
+$('projectorSearch').addEventListener('input',showProjector);
+showDevotion();
+showProjector();
+
+
+window.addEventListener('online',()=>{$('net').textContent='Entènèt disponib';});window.addEventListener('offline',()=>{$('net').textContent='Mòd offline';});$('net').textContent=navigator.onLine?'Entènèt disponib':'Mòd offline';
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+refresh();
+</script>
+</body></html>
